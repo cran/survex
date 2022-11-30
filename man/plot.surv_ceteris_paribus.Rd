@@ -13,7 +13,7 @@
   variables = NULL,
   numerical_plot_type = "lines",
   title = "Ceteris paribus survival profile",
-  subtitle = NULL
+  subtitle = "default"
 )
 }
 \arguments{
@@ -33,13 +33,14 @@
 
 \item{title}{character, title of the plot}
 
-\item{subtitle}{character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels}
+\item{subtitle}{character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels}
 }
 \value{
-A grid of \code{ggplot2} plots arranged by the \code{gridExtra::grid.arrange} function.
+A grid of \code{ggplot} objects arranged with the \code{gridExtra::grid.arrange} function.
 }
 \description{
-This function plots objects of class \code{"predict_profile_survival"}.
+This function plots objects of class \code{"predict_profile_survival"} created using
+the \code{predict_profile()} function.
 }
 \examples{
 \donttest{
@@ -61,6 +62,7 @@ p_profile_with_cat <- predict_profile(
 
 plot(p_profile_with_cat)
 }
+
 }
 \seealso{
 Other functions for plotting 'predict_profile_survival' objects: 

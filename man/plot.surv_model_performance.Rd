@@ -10,7 +10,7 @@
   metrics = NULL,
   metrics_type = "time_dependent",
   title = "Model performance",
-  subtitle = NULL,
+  subtitle = "default",
   facet_ncol = NULL,
   colors = NULL
 )
@@ -26,17 +26,18 @@
 
 \item{title}{character, title of the plot}
 
-\item{subtitle}{character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels}
+\item{subtitle}{character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels}
 
 \item{facet_ncol}{number of columns for arranging subplots}
 
 \item{colors}{character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")}
 }
 \value{
-A \code{ggplot2} plot.
+An object of the class \code{ggplot}.
 }
 \description{
-This function plots objects of class \code{"surv_model_performance"} - visualization of metrics of different models
+This function plots objects of class \code{"surv_model_performance"} - visualization of
+metrics of different models created using the \code{model_performance(..., type="metrics")} function.
 }
 \examples{
 library(survival)

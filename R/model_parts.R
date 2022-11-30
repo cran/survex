@@ -1,13 +1,9 @@
-#' @rdname model_parts.surv_explainer
-#' @export
-model_parts <- function(explainer, ...) UseMethod("model_parts", explainer)
-
 #' Dataset Level Variable Importance for Survival Models
 #'
-#' This function calculates variable importance as change in the loss function after variable permutations.
+#' This function calculates variable importance as a change in the loss function after the variable values permutations.
 #'
 #'
-#' @param explainer a model to be explained, preprocessed by the `explain()` function
+#' @param explainer an explainer object - model preprocessed by the `explain()` function
 #' @param loss_function a function that will be used to assess variable importance, by default `loss_brier_score` for survival models. The function can be supplied manually but has to have these named parameters (`y_true`, `risk`, `surv`, `times`), where `y_true` represents the `survival::Surv` object with observed times and statuses, `risk` is the risk score calculated by the model, and `surv` is the survival function for each observation evaluated at `times`.
 #' @param ... other parameters passed to `DALEX::model_parts` if `output_type == "risk"`, otherwise passed to internal functions.
 #' @param type a character vector, if `"raw"` the results are losses after the permutation, if `"ratio"` the results are in the form `loss/loss_full_model` and if `"difference"` the results are of the form `loss - loss_full_model`
@@ -17,11 +13,10 @@ model_parts <- function(explainer, ...) UseMethod("model_parts", explainer)
 #' @inheritDotParams surv_integrated_feature_importance -x
 #'
 #'
-#' @return An object of class `c("model_parts_survival", "surv_feature_importance")`. It's a list with the explanations in the `result` element
+#' @return An object of class `c("model_parts_survival", "surv_feature_importance")`. It's a list with the explanations in the `result` element.
 #'
 #' @details
 #' *Note*: This function can be run within `progressr::with_progress()` to display a progress bar, as the execution can take long, especially on large datasets.
-#' @rdname model_parts.surv_explainer
 #'
 #' @examples
 #' \donttest{
@@ -53,7 +48,11 @@ model_parts <- function(explainer, ...) UseMethod("model_parts", explainer)
 #' print(head(rsf_ranger_model_parts$result))
 #' plot(cph_model_parts_brier, rsf_ranger_model_parts)
 #' }
-#'
+#' @rdname model_parts.surv_explainer
+#' @export
+model_parts <- function(explainer, ...) UseMethod("model_parts", explainer)
+
+#' @rdname model_parts.surv_explainer
 #' @export
 model_parts.surv_explainer <- function(explainer,
                                        loss_function = survex::loss_brier_score,
@@ -66,42 +65,41 @@ model_parts.surv_explainer <- function(explainer,
   if (type == "variable_importance") type <- "raw" # it's an alias
 
   switch(output_type,
-    "risk" = DALEX::model_parts(
-      explainer = explainer,
-      loss_function = loss_function,
-      ... = ...,
-      type = type,
-      N = N
-    ),
-    "survival" = {
-      test_explainer(explainer, has_data = TRUE, has_y = TRUE, has_survival = TRUE, function_name = "model_parts")
+         "risk" = DALEX::model_parts(
+           explainer = explainer,
+           loss_function = loss_function,
+           ... = ...,
+           type = type,
+           N = N
+         ),
+         "survival" = {
+           test_explainer(explainer, has_data = TRUE, has_y = TRUE, has_survival = TRUE, function_name = "model_parts")
 
-      if (attr(loss_function, "loss_name") %in% c("integrated Brier score", "One minus integrated C/D AUC", "One minus C-Index")) {
-        res <- surv_integrated_feature_importance(
-          x = explainer,
-          loss_function = loss_function,
-          type = type,
-          N = N,
-          ...
-        )
-        class(res) <- c("model_parts", class(res))
-        return(res)
-      } else {
-        res <- surv_feature_importance(
-          x = explainer,
-          loss_function = loss_function,
-          type = type,
-          N = N,
-          ...
-        )
-        class(res) <- c("model_parts_survival", class(res))
-        res
-      }
-    },
-    stop("Type should be either `survival` or `risk`")
+           if (attr(loss_function, "loss_type") == "integrated") {
+             res <- surv_integrated_feature_importance(
+               x = explainer,
+               loss_function = loss_function,
+               type = type,
+               N = N,
+               ...
+             )
+             class(res) <- c("model_parts_survival", class(res))
+             return(res)
+           } else {
+             res <- surv_feature_importance(
+               x = explainer,
+               loss_function = loss_function,
+               type = type,
+               N = N,
+               ...
+             )
+             class(res) <- c("model_parts_survival", class(res))
+             res
+           }
+         },
+         stop("Type should be either `survival` or `risk`")
   )
 }
-
 
 #' @export
 model_parts.default <- DALEX::model_parts

@@ -1,6 +1,6 @@
 Package: survex
 Title: Explainable Machine Learning in Survival Analysis
-Version: 0.1.1
+Version: 0.2.2
 Authors@R: 
     c(
         person("Mikołaj", "Spytek", email = "mikolajspytek@gmail.com", role = c("aut", "cre")),
@@ -19,21 +19,20 @@ License: GPL (>= 3)
 Encoding: UTF-8
 RoxygenNote: 7.2.1
 Depends: R (>= 3.5.0)
-Imports: DALEX (>= 2.2.1), ingredients, ggplot2, gridExtra, pec,
-        survival
-Suggests: censored, covr, gbm, generics, glmnet, knitr, mboost,
-        parsnip, progressr, randomForestSRC, ranger, rmarkdown,
+Imports: DALEX (>= 2.2.1), ggplot2, pec, survival, patchwork
+Suggests: censored, covr, gbm, generics, glmnet, ingredients, knitr,
+        mboost, parsnip, progressr, randomForestSRC, ranger, rmarkdown,
         testthat (>= 3.0.0), withr, xgboost
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://modeloriented.github.io/survex/
 BugReports: https://github.com/ModelOriented/survex/issues
 NeedsCompilation: no
-Packaged: 2022-09-02 11:24:25 UTC; Mikołaj
+Packaged: 2022-11-30 12:07:25 UTC; Mikołaj
 Author: Mikołaj Spytek [aut, cre],
   Mateusz Krzyziński [aut],
   Hubert Baniecki [aut] (<https://orcid.org/0000-0001-6661-5364>),
   Przemyslaw Biecek [aut] (<https://orcid.org/0000-0001-8423-1823>)
 Maintainer: Mikołaj Spytek <mikolajspytek@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-09-05 08:00:02 UTC
+Date/Publication: 2022-12-01 00:20:02 UTC

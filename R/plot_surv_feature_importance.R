@@ -1,15 +1,17 @@
 #' Plot Permuatational Feature Importance for Survival Models
 #'
-#' This function plots feature importance objects created for survival models.
+#' This function plots feature importance objects created for survival models using the
+#' `model_parts()` function with a time-dependent metric, that is `loss_one_minus_cd_auc()` or
+#' `loss_brier_score()`.
 #'
 #' @param x an object of class `"surv_feature_importance"` to be plotted
 #' @param ... additional objects of class `"surv_feature_importance"` to be plotted together
 #' @param title character, title of the plot
-#' @param subtitle character, subtitle of the plot, if `NULL` automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels
+#' @param subtitle character, subtitle of the plot, `'default'` automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels
 #' @param max_vars maximum number of variables to be plotted (least important variables are ignored)
 #' @param colors character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")
 #'
-#' @return A `ggplot2` plot.
+#' @return An object of the class `ggplot`.
 #'
 #' @family functions for plotting 'model_parts_survival' objects
 #'
@@ -28,14 +30,13 @@
 #'
 #' plot(mp, mp_rf)
 #' }
-#' @importFrom utils stack head
-#' @importFrom DALEX theme_drwhy
+#'
 #' @export
 plot.surv_feature_importance <- function(x, ...,
-                                                    title = "Time-dependent feature importance",
-                                                    subtitle = NULL,
-                                                    max_vars = 6,
-                                                    colors = NULL) {
+                                         title = "Time-dependent feature importance",
+                                         subtitle = "default",
+                                         max_vars = 6,
+                                         colors = NULL) {
 
     df_list <- c(list(x), list(...))
 
@@ -69,19 +70,21 @@ plot.surv_feature_importance <- function(x, ...,
         y_lab <- paste0("Loss function after variable's permutations", additional_info)
     }
 
-    if (is.null(subtitle)) {
+    if (!is.null(subtitle) && subtitle == "default") {
         glm_labels <- paste0(label, collapse = ", ")
         subtitle <- paste0("created for the ", glm_labels, " model")
     }
 
+    with(plotting_df, {
 
-    ggplot(data = plotting_df, aes_string(x = "times", y = "values", color = "ind", label = "ind")) +
-        geom_line(size = 0.8) +
+    ggplot(data = plotting_df, aes(x = times, y = values, color = ind, label = ind)) +
+        geom_line(linewidth = 0.8, size = 0.8) +
         theme_drwhy() +
         xlab("") +
         ylab(y_lab) +
         scale_color_manual(name = "Variable", values = c("#000000", generate_discrete_color_scale(num_variables, colors))) +
         labs(title = title, subtitle = subtitle) +
         facet_wrap(~label)
+    })
 
 }

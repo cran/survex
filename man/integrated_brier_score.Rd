@@ -5,20 +5,13 @@
 \alias{loss_integrated_brier_score}
 \title{Calculate integrated Brier score}
 \usage{
-integrated_brier_score(
-  y_true = NULL,
-  risk = NULL,
-  surv = NULL,
-  times = NULL,
-  brier = NULL
-)
+integrated_brier_score(y_true = NULL, risk = NULL, surv = NULL, times = NULL)
 
 loss_integrated_brier_score(
   y_true = NULL,
   risk = NULL,
   surv = NULL,
-  times = NULL,
-  brier = NULL
+  times = NULL
 )
 }
 \arguments{
@@ -29,8 +22,6 @@ loss_integrated_brier_score(
 \item{surv}{a matrix containing the predicted survival functions for the considered observations, each row represents a single observation, whereas each column one time point}
 
 \item{times}{a vector of time points at which the survival function was evaluated}
-
-\item{brier}{a vector containing already calculated Brier score metric at the time points specified in the times parameter. If this is provided all arguments except \code{times} and \code{brier} are ignored}
 }
 \value{
 numeric from 0 to 1, lower values indicate better performance
@@ -41,6 +32,14 @@ This function calculates the integrated Brier score metric for a survival model.
 \details{
 It is useful to see how a model performs as a whole, not at specific time points, for example for easier comparison. This function allows for calculating the integral of Brier score metric numerically using the trapezoid method.
 }
+\section{References}{
+
+\itemize{
+\item [1] Brier, Glenn W. \href{https://journals.ametsoc.org/view/journals/mwre/78/1/1520-0493_1950_078_0001_vofeit_2_0_co_2.xml}{"Verification of forecasts expressed in terms of probability."} Monthly Weather Review 78.1 (1950): 1-3.
+\item [2] Graf, Erika, et al. \href{https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0258(19990915/30)18:17/18\%3C2529::AID-SIM274\%3E3.0.CO;2-5}{"Assessment and comparison of prognostic classification schemes for survival data."} Statistics in Medicine 18.17‐18 (1999): 2529-2545.
+}
+}
+
 \examples{
 
 library(survival)
@@ -53,13 +52,8 @@ y <- cph_exp$y
 times <- cph_exp$times
 surv <- cph_exp$predict_survival_function(cph, cph_exp$data, times)
 
-
 # calculating directly
 integrated_brier_score(y, surv = surv, times = times)
-
-# calculating based on given auc vector
-brier_score <- brier_score(y, surv = surv, times = times)
-integrated_brier_score(times = times, brier = brier_score)
 
 }
 \seealso{

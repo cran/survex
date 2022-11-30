@@ -8,7 +8,7 @@
   x,
   ...,
   title = "Time-dependent feature importance",
-  subtitle = NULL,
+  subtitle = "default",
   max_vars = 6,
   colors = NULL
 )
@@ -20,17 +20,19 @@
 
 \item{title}{character, title of the plot}
 
-\item{subtitle}{character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels}
+\item{subtitle}{character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels}
 
 \item{max_vars}{maximum number of variables to be plotted (least important variables are ignored)}
 
 \item{colors}{character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")}
 }
 \value{
-A \code{ggplot2} plot.
+An object of the class \code{ggplot}.
 }
 \description{
-This function plots feature importance objects created for survival models.
+This function plots feature importance objects created for survival models using the
+\code{model_parts()} function with a time-dependent metric, that is \code{loss_one_minus_cd_auc()} or
+\code{loss_brier_score()}.
 }
 \examples{
 \donttest{
@@ -47,6 +49,7 @@ mp_rf <- model_parts(explainer_rf)
 
 plot(mp, mp_rf)
 }
+
 }
 \seealso{
 Other functions for plotting 'model_parts_survival' objects: 

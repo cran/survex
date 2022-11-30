@@ -12,10 +12,11 @@
 \item{...}{additional parameters passed to the \code{plot.surv_model_performance} or \code{plot.surv_model_performance_rocs} function}
 }
 \value{
-A \code{ggplot2} plot.
+An object of the class \code{ggplot}.
 }
 \description{
-This function is a wrapper for plotting \code{model_performance} objects created for survival models.
+This function is a wrapper for plotting \code{model_performance} objects created for survival models
+using the \code{model_performance()} function.
 }
 \section{Plot options}{
 
@@ -26,7 +27,7 @@ This function is a wrapper for plotting \code{model_performance} objects created
 \item \code{metrics} - character, names of metrics to be plotted (subset of C/D AUC", "Brier score" for \code{metrics_type \%in\% c("time_dependent", "functional")} or subset of "C-index","Integrated Brier score", "Integrated C/D AUC" for \code{metrics_type == "scalar"}), by default (\code{NULL}) all metrics of a given type are plotted
 \item \code{metrics_type} - character, either one of \code{c("time_dependent","functional")} for functional metrics or \code{"scalar"} for scalar metrics
 \item \code{title} - character, title of the plot
-\item \code{subtitle} - character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels
+\item \code{subtitle} - character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels
 \item \code{facet_ncol} - number of columns for arranging subplots
 \item \code{colors} - character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")
 }
@@ -37,7 +38,7 @@ This function is a wrapper for plotting \code{model_performance} objects created
 \item \code{x} - an object of class \code{"surv_model_performance_rocs"} to be plotted
 \item \code{...} - additional objects of class \code{"surv_model_performance_rocs"} to be plotted together
 \item \code{title} - character, title of the plot
-\item \code{subtitle} - character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels
+\item \code{subtitle} - character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels
 \item \code{colors} - character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")
 \item \code{facet_ncol} - number of columns for arranging subplots
 }
@@ -45,6 +46,7 @@ This function is a wrapper for plotting \code{model_performance} objects created
 }
 
 \examples{
+\donttest{
 library(survival)
 library(survex)
 
@@ -56,7 +58,7 @@ plot(m_perf, metrics_type = "functional")
 
 m_perf_roc <- model_performance(exp, type = "roc", times = c(100, 300))
 plot(m_perf_roc)
-
+}
 }
 \seealso{
 Other functions for plotting 'model_performance_survival' objects: 

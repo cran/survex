@@ -2,9 +2,9 @@
 % Please edit documentation in R/plot_surv_shap.R
 \name{plot.surv_shap}
 \alias{plot.surv_shap}
-\title{Plot SurvSHAP Explanations for Survival Models}
+\title{Plot SurvSHAP(t) Explanations for Survival Models}
 \usage{
-\method{plot}{surv_shap}(x, ..., title = "SurvSHAP(t)", subtitle = NULL, colors = NULL)
+\method{plot}{surv_shap}(x, ..., title = "SurvSHAP(t)", subtitle = "default", colors = NULL)
 }
 \arguments{
 \item{x}{an object of class \code{"surv_shap"} to be plotted}
@@ -13,15 +13,16 @@
 
 \item{title}{character, title of the plot}
 
-\item{subtitle}{character, subtitle of the plot, if \code{NULL} automatically generated as "created for XXX, YYY models", where XXX and YYY are explainer labels}
+\item{subtitle}{character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels}
 
 \item{colors}{character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")}
 }
 \value{
-A \code{ggplot2} plot.
+An object of the class \code{ggplot}.
 }
 \description{
-This functions plots objects of class \code{surv_shap} - SHAP explanations of survival models.
+This functions plots objects of class \code{surv_shap} - time-dependent explanations of
+survival models created using the \code{predict_parts(..., type="survshap")} function.
 }
 \examples{
 \donttest{
@@ -34,6 +35,7 @@ exp <- explain(model)
 p_parts_shap <- predict_parts(exp, veteran[1, -c(3, 4)], type = "survshap")
 plot(p_parts_shap)
 }
+
 }
 \seealso{
 Other functions for plotting 'predict_parts_survival' objects: 

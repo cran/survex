@@ -12,7 +12,7 @@
   facet_ncol = NULL,
   numerical_plot_type = "lines",
   title = "Partial dependence survival profile",
-  subtitle = NULL,
+  subtitle = "default",
   colors = NULL
 )
 }
@@ -31,15 +31,16 @@
 
 \item{title}{character, title of the plot}
 
-\item{subtitle}{character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels}
+\item{subtitle}{character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels}
 
 \item{colors}{character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")}
 }
 \value{
-A grid of \code{ggplot2} plots arranged by the \code{gridExtra::grid.arrange} function.
+A grid of \code{ggplot} objects arranged with the \code{gridExtra::grid.arrange} function.
 }
 \description{
-This function plots objects of class \code{"model_profile_survival"}.
+This function plots objects of class \code{"model_profile_survival"} created
+using the \code{model_profile()} function.
 }
 \examples{
 \donttest{
@@ -51,10 +52,11 @@ exp <- explain(model)
 
 m_prof <- model_profile(exp, categorical_variables = "trt")
 
-plot(m_prof, facet_ncol = 1)
+plot(m_prof)
 
-plot(m_prof, numerical_plot_type = "contours", facet_ncol = 1)
+plot(m_prof, numerical_plot_type = "contours")
 
 plot(m_prof, variables = c("trt", "age"), facet_ncol = 1)
 }
+
 }

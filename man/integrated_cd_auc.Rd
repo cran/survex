@@ -4,13 +4,7 @@
 \alias{integrated_cd_auc}
 \title{Calculate integrated C/D AUC}
 \usage{
-integrated_cd_auc(
-  y_true = NULL,
-  risk = NULL,
-  surv = NULL,
-  times = NULL,
-  auc = NULL
-)
+integrated_cd_auc(y_true = NULL, risk = NULL, surv = NULL, times = NULL)
 }
 \arguments{
 \item{y_true}{a \code{survival::Surv} object containing the times and statuses of observations for which the metric will be evaluated}
@@ -20,11 +14,15 @@ integrated_cd_auc(
 \item{surv}{a matrix containing the predicted survival functions for the considered observations, each row represents a single observation, whereas each column one time point}
 
 \item{times}{a vector of time points at which the survival function was evaluated}
-
-\item{auc}{a vector containing already calculated AUC metric at the time points specified in the times parameter. If this is provided all arguments except \code{times} and \code{auc} are ignored}
 }
 \value{
 numeric from 0 to 1, higher values indicate better performance
+
+#' @section References:
+\itemize{
+\item [1] Uno, Hajime, et al. \href{https://www.jstor.org/stable/27639883}{"Evaluating prediction rules for t-year survivors with censored regression models."} Journal of the American Statistical Association 102.478 (2007): 527-537.
+\item [2] Hung, Hung, and Chin‐Tsang Chiang. \href{https://www.jstor.org/stable/41000414}{"Optimal composite markers for time‐dependent receiver operating characteristic curves with censored survival data."} Scandinavian Journal of Statistics 37.4 (2010): 664-679.
+}
 }
 \description{
 This function calculates the integrated Cumulative/Dynamic AUC metric for a survival model.
@@ -44,13 +42,7 @@ y <- cph_exp$y
 times <- cph_exp$times
 surv <- cph_exp$predict_survival_function(cph, cph_exp$data, times)
 
-
-# calculating directly
 integrated_cd_auc(y, surv = surv, times = times)
-
-# calculating based on given auc vector
-auc <- cd_auc(y, surv = surv, times = times)
-integrated_cd_auc(times = times, auc = auc)
 
 }
 \seealso{

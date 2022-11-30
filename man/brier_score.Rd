@@ -19,7 +19,7 @@ loss_brier_score(y_true = NULL, risk = NULL, surv = NULL, times = NULL)
 \item{times}{a vector of time points at which the survival function was evaluated}
 }
 \value{
-numeric from 0 to 1, lower scores are better (brier score of 0.25 represents a model which returns always returns 0.5 as the predicted survival function)
+numeric from 0 to 1, lower scores are better (Brier score of 0.25 represents a model which returns always returns 0.5 as the predicted survival function)
 }
 \description{
 A function for calculating the Brier score for a survival model.
@@ -27,6 +27,14 @@ A function for calculating the Brier score for a survival model.
 \details{
 Brier score is used to evaluate the performance of a survival model, based on the squared distance between the predicted survival function and the actual event time, weighted to account for censored observations.
 }
+\section{References}{
+
+\itemize{
+\item [1] Brier, Glenn W. \href{https://journals.ametsoc.org/view/journals/mwre/78/1/1520-0493_1950_078_0001_vofeit_2_0_co_2.xml}{"Verification of forecasts expressed in terms of probability."} Monthly Weather Review 78.1 (1950): 1-3.
+\item [2] Graf, Erika, et al. \href{https://onlinelibrary.wiley.com/doi/10.1002/(SICI)1097-0258(19990915/30)18:17/18\%3C2529::AID-SIM274\%3E3.0.CO;2-5}{"Assessment and comparison of prognostic classification schemes for survival data."} Statistics in Medicine 18.17‐18 (1999): 2529-2545.
+}
+}
+
 \examples{
 library(survival)
 library(survex)

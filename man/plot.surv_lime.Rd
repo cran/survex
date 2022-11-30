@@ -10,7 +10,7 @@
   show_survival_function = TRUE,
   ...,
   title = "SurvLIME",
-  subtitle = NULL,
+  subtitle = "default",
   colors = NULL
 )
 }
@@ -25,17 +25,19 @@
 
 \item{title}{character, title of the plot}
 
-\item{subtitle}{character, subtitle of the plot, if \code{NULL} automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels}
+\item{subtitle}{character, subtitle of the plot, \code{'default'} automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels}
 
 \item{colors}{character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")}
 }
 \value{
-A \code{ggplot2} plot.
+An object of the class \code{ggplot}.
 }
 \description{
-This functions plots objects of class \code{surv_lime} - LIME explanations of survival models.
+This functions plots objects of class \code{surv_lime} - LIME explanations of survival models
+created using \code{predict_parts(..., type="survlime")} function.
 }
 \examples{
+\donttest{
 library(survival)
 library(survex)
 
@@ -44,7 +46,7 @@ exp <- explain(model)
 
 p_parts_lime <- predict_parts(exp, veteran[1, -c(3, 4)], type = "survlime")
 plot(p_parts_lime)
-
+}
 }
 \seealso{
 Other functions for plotting 'predict_parts_survival' objects: 

@@ -1,6 +1,7 @@
 #' Plot Predict Profile for Survival Models
 #'
-#' This function plots objects of class `"predict_profile_survival"`.
+#' This function plots objects of class `"predict_profile_survival"` created using
+#' the `predict_profile()` function.
 #'
 #' @param x an object of class `predict_profile_survival` to be plotted
 #' @param ... additional parameters, unused, currently ignored
@@ -10,9 +11,9 @@
 #' @param variables character, names of the variables to be plotted
 #' @param numerical_plot_type character, either `"lines"`, or `"contours"` selects the type of numerical variable plots
 #' @param title character, title of the plot
-#' @param subtitle character, subtitle of the plot, if `NULL` automaticaly generated as "created for XXX, YYY models", where XXX and YYY are explainer labels
+#' @param subtitle character, subtitle of the plot, `'default'` automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels
 #'
-#' @return A grid of `ggplot2` plots arranged by the `gridExtra::grid.arrange` function.
+#' @return A grid of `ggplot` objects arranged with the `gridExtra::grid.arrange` function.
 #'
 #' @family functions for plotting 'predict_profile_survival' objects
 #'
@@ -36,8 +37,7 @@
 #'
 #' plot(p_profile_with_cat)
 #' }
-#' @import ggplot2
-#' @importFrom stats median
+#'
 #' @export
 plot.surv_ceteris_paribus <- function(x,
                                       ...,
@@ -47,7 +47,7 @@ plot.surv_ceteris_paribus <- function(x,
                                       variables = NULL,
                                       numerical_plot_type = "lines",
                                       title = "Ceteris paribus survival profile",
-                                      subtitle = NULL) {
+                                      subtitle = "default") {
     if (!is.null(variable_type))
         check_variable_type(variable_type)
 
@@ -62,7 +62,7 @@ plot.surv_ceteris_paribus <- function(x,
     all_profiles$`_ids_` <- factor(all_profiles$`_ids_`)
 
     # extract labels to use in the default subtitle
-    if (is.null(subtitle)) {
+    if (!is.null(subtitle) && subtitle == "default") {
         labels <- paste0(unique(all_profiles$`_label_`), collapse = ", ")
         subtitle <- paste0("created for the ", labels, " model")
     }
@@ -90,10 +90,6 @@ plot.surv_ceteris_paribus <- function(x,
 
     all_variables <- intersect(all_variables, unique(x$`_vname_`))
 
-    if (is.null(facet_ncol))
-        facet_ncol <-
-        switch(as.character(length(all_variables)), "1" = 1, "2" = 2, 3)
-
     lsc <- lapply(all_variables, function(sv) {
         tmp <- x[x$`_vname_` == sv,
                  c(sv,
@@ -119,55 +115,22 @@ plot.surv_ceteris_paribus <- function(x,
     pl <- plot_individual_ceteris_paribus_survival(
         all_profiles = ceteris_paribus_with_observation,
         variables = all_variables,
-        facet_ncol = facet_ncol,
         colors = colors,
-        numerical_plot_type = numerical_plot_type,
-        title = title,
-        subtitle = subtitle
+        numerical_plot_type = numerical_plot_type
     )
 
+    patchwork::wrap_plots(pl, ncol = facet_ncol) +
+        patchwork::plot_annotation(title = title,
+                                   subtitle = subtitle) & DALEX::theme_drwhy()
 
-    titleGrob <-
-        grid::textGrob(
-            title,
-            just = "left",
-            x = 0.05,
-            gp = grid::gpar(fontsize = 16, col = "#371ea3")
-        )
-    subtitleGrob <-
-        grid::textGrob(
-            subtitle,
-            just = "left",
-            x = 0.05,
-            gp = grid::gpar(fontsize = 11, col = "#371ea3")
-        )
-    grided <-
-        do.call(gridExtra::arrangeGrob, c(pl, list(ncol = facet_ncol)))
-    margin <- grid::unit(0.5, "line")
-    return(
-        gridExtra::grid.arrange(
-            titleGrob,
-            subtitleGrob,
-            grided,
-            ncol = 1,
-            heights = grid::unit.c(
-                grid::grobHeight(titleGrob) + 1.2 * margin,
-                grid::grobHeight(subtitleGrob) + margin,
-                grid::unit(1, "null")
-            )
-        )
-    )
 }
 
 #' @importFrom DALEX theme_drwhy
 #' @import ggplot2
 plot_individual_ceteris_paribus_survival <- function(all_profiles,
                                                      variables,
-                                                     facet_ncol,
                                                      colors,
-                                                     numerical_plot_type,
-                                                     title,
-                                                     subtitle) {
+                                                     numerical_plot_type) {
     pl <- lapply(variables, function(var) {
         df <- all_profiles[all_profiles$`_vname_` == var, ]
 
@@ -179,13 +142,14 @@ plot_individual_ceteris_paribus_survival <- function(all_profiles,
                                 mid = "#46bac2",
                                 high = "#371ea3")
             if (numerical_plot_type == "lines") {
+                with(df, {
                 ggplot(
                     df,
-                    aes_string(
-                        x = "`_times_`",
-                        y = "`_yhat_`",
-                        group = "`_x_`",
-                        color = "as.numeric(as.character(`_x_`))"
+                    aes(
+                        x = `_times_`,
+                        y = `_yhat_`,
+                        group = `_x_`,
+                        color = as.numeric(as.character(`_x_`))
                     )
                 ) +
                     geom_line() +
@@ -197,17 +161,19 @@ plot_individual_ceteris_paribus_survival <- function(all_profiles,
                         midpoint = median(as.numeric(as.character(df$`_x_`)))
                     ) +
                     geom_line(data = df[df$`_real_point_`, ], color =
-                                  "red", size = 0.8) +
+                                  "red", linewidth = 0.8, size = 0.8) +
                     xlab("") + ylab("survival function value") + ylim(c(0, 1)) +
                     theme_drwhy() +
                     facet_wrap(~`_vname_`)
+                })
             } else {
-                plt <- ggplot(
+                plt <- with(df, {
+                        ggplot(
                     df,
-                    aes_string(
-                        x = "`_times_`",
-                        y = "as.numeric(as.character(`_x_`))",
-                        z = "`_yhat_`"
+                    aes(
+                        x = `_times_`,
+                        y = as.numeric(as.character(`_x_`)),
+                        z = `_yhat_`
                     )
                 ) +
                     geom_contour_filled(breaks = seq(1, 0, -0.1)) +
@@ -218,6 +184,7 @@ plot_individual_ceteris_paribus_survival <- function(all_profiles,
                     theme_drwhy() +
                     theme(legend.spacing = grid::unit(0.1, 'line')) +
                     facet_wrap(~`_vname_`)
+                })
                 if (any(df$`_real_point_`)) {
                     range_time <- range(df["_times_"])
                     var_val <- as.numeric(unique(df[df$`_real_point_`, "_x_"]))
@@ -227,25 +194,26 @@ plot_individual_ceteris_paribus_survival <- function(all_profiles,
                 }
         } else {
             n_colors <- length(unique(df$`_x_`))
-            pl <-
+            pl <- with(df, {
                 ggplot(
                     df,
-                    aes_string(
-                        x = "`_times_`",
-                        y = "`_yhat_`",
-                        group = "`_x_`",
-                        color = "`_x_`"
+                    aes(
+                        x = `_times_`,
+                        y = `_yhat_`,
+                        group = `_x_`,
+                        color = `_x_`
                     )
                 ) +
                 geom_line(data = df[!df$`_real_point_`, ],
+                          linewidth = 0.8,
                           size = 0.8) +
                 geom_line(data = df[df$`_real_point_`, ],
-                          size = 0.8, linetype = "longdash") +
-                scale_color_manual(name = "",
+                          size = 0.8, linewidth = 0.8, linetype = "longdash") +
+                scale_color_manual(name = paste0(unique(df$`_vname_`), " value"),
                                    values = generate_discrete_color_scale(n_colors, colors)) +
-                facet_wrap(~`_vname_`, scales = "free_x", ncol = facet_ncol) +
                 theme_drwhy() +
-                xlab("") + ylab("survival function value") + ylim(c(0, 1))
+                xlab("") + ylab("survival function value") + ylim(c(0, 1)) +
+                facet_wrap(~`_vname_`) })
         }
     })
 }

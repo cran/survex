@@ -7,24 +7,52 @@
 \usage{
 model_performance(explainer, ...)
 
-\method{model_performance}{surv_explainer}(explainer, ..., type = "metrics", times = NULL)
+\method{model_performance}{surv_explainer}(
+  explainer,
+  ...,
+  type = "metrics",
+  metrics = c(`C-index` = c_index, `Integrated C/D AUC` = integrated_cd_auc,
+    `Brier score` = brier_score, `Integrated Brier score` = integrated_brier_score,
+    `C/D AUC` = cd_auc),
+  times = NULL
+)
 }
 \arguments{
-\item{explainer}{a model to be explained, preprocessed by the \code{explain()} function}
+\item{explainer}{an explainer object - model preprocessed by the \code{explain()} function}
 
 \item{...}{other parameters, currently ignored}
 
 \item{type}{character, either \code{"metrics"} or \code{"roc"}. If \code{"metrics"} then performance metrics are calculated, if \code{"roc"} ROC curves for selected time points are calculated.}
 
+\item{metrics}{a named vector containing the metrics to be calculated. The values should be standardized loss functions. The functions can be supplied manually but has to have these named parameters (\code{y_true}, \code{risk}, \code{surv}, \code{times}), where \code{y_true} represents the \code{survival::Surv} object with observed times and statuses, \code{risk} is the risk score calculated by the model, and \code{surv} is the survival function for each observation evaluated at \code{times}.}
+
 \item{times}{a numeric vector of times. If \code{type == "metrics"} then the survival function is evaluated at these times, if \code{type == "roc"} then the ROC curves are calculated at these times.}
 }
 \value{
-An object of class \code{"model_performance_survival"}. It's a list of metric values calculated for the model.
+An object of class \code{"model_performance_survival"}. It's a list of metric values calculated for the model. It contains:
+\itemize{
+\item Harrell's concordance index [\href{https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4780030207}{1}]
+\item Brier score [\href{https://journals.ametsoc.org/view/journals/mwre/78/1/1520-0493_1950_078_0001_vofeit_2_0_co_2.xml}{2}, \href{https://onlinelibrary.wiley.com/doi/abs/10.1002/\%28SICI\%291097-0258\%2819990915/30\%2918\%3A17/18\%3C2529\%3A\%3AAID-SIM274\%3E3.0.CO\%3B2-5}{3}]
+\item C/D AUC using the estimator proposed by Uno et. al [\href{https://www.jstor.org/stable/27639883#metadata_info_tab_contents}{4}]
+\item integral of the Brier score
+\item integral of the C/D AUC
+}
 }
 \description{
 This function calculates metrics for survival models. The metrics calculated are C/D AUC, Brier score, and their integrated versions, as well as concordance index. It also can calculate ROC curves for specific selected time points.
 }
+\section{References}{
+
+\itemize{
+\item [1] Harrell, F.E., Jr., et al. \href{https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4780030207}{"Regression modelling strategies for improved prognostic prediction."} Statistics in Medicine 3.2 (1984): 143-152.
+\item [2] Brier, Glenn W. \href{https://journals.ametsoc.org/view/journals/mwre/78/1/1520-0493_1950_078_0001_vofeit_2_0_co_2.xml}{"Verification of forecasts expressed in terms of probability."} Monthly Weather Review 78.1 (1950): 1-3.
+\item [3] Graf, Erika, et al. \href{https://onlinelibrary.wiley.com/doi/abs/10.1002/\%28SICI\%291097-0258\%2819990915/30\%2918\%3A17/18\%3C2529\%3A\%3AAID-SIM274\%3E3.0.CO\%3B2-5}{"Assessment and comparison of prognostic classification schemes for survival data."} Statistics in Medicine 18.17‐18 (1999): 2529-2545.
+\item [4] Uno, Hajime, et al. \href{https://www.jstor.org/stable/27639883#metadata_info_tab_contents}{"Evaluating prediction rules for t-year survivors with censored regression models."} Journal of the American Statistical Association 102.478 (2007): 527-537.
+}
+}
+
 \examples{
+\donttest{
 library(survival)
 library(survex)
 
@@ -57,7 +85,7 @@ plot(rsf_ranger_model_performance, cph_model_performance,
 
 plot(rsf_ranger_model_performance, cph_model_performance, rsf_src_model_performance)
 
-cph_model_performance_roc <- model_performance(cph_exp, type = "roc", times = c(100, 500, 1200))
+cph_model_performance_roc <- model_performance(cph_exp, type = "roc", times = c(100, 250, 500))
 plot(cph_model_performance_roc)
-
+}
 }
