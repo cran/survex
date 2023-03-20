@@ -8,6 +8,7 @@
 #' @param N the maximum number of observations used for calculation of attributions. If `NULL` (default) all observations will be used.
 #' @param type if `output_type == "survival"` must be either `"survshap"` or `"survlime"`, otherwise refer to the `DALEX::predict_parts`
 #' @param output_type either `"survival"` or `"risk"` the type of survival model output that should be considered for explanations. If `"survival"` the explanations are based on the survival function. Otherwise the scalar risk predictions are used by the `DALEX::predict_parts` function.
+#' @param explanation_label a label that can overwrite explainer label (useful for multiple explanations for the same explainer/model)
 #'
 #' @return An object of class `"predict_parts_survival"` and additional classes depending on the type of explanations. It is a list with the element `result` containing the results of the calculation.
 #'
@@ -16,7 +17,7 @@
 #'
 #' There are additional parameters that are passed to internal functions
 #'
-#' * for `surv_lime`
+#' * for `survlime`
 #'     * `N` -  a positive integer, number of observations generated in the neighbourhood
 #'     * `distance_metric` -  character, name of the distance metric to be used, only `"euclidean"` is implemented
 #'     * `kernel_width` -  a numeric, parameter used for calculating weights, by default it's `sqrt(ncol(data)*0.75)`
@@ -25,14 +26,14 @@
 #'     * `max_iter` -  a numeric, maximal number of iteration for the optimization problem
 #'     * `categorical_variables` -  character vector, names of variables that should be treated as categories (factors are included by default)
 #'     * `k` -  a small positive number > 1, added to chf before taking log, so that weigths aren't negative
-#' * for `surv_shap`
+#' * for `survshap`
 #'     * `timestamps` -  a numeric vector, time points at which the survival function will be evaluated
 #'     * `y_true` -  a two element numeric vector or matrix of one row and two columns, the first element being the true observed time and the second the status of the observation, used for plotting
-#'     * `calculation_method` -  a character, only `"kernel"` is implemented for now.
+#'     * `calculation_method` -  a character, either `"kernelshap"` for use of `kernelshap` library (providing faster Kernel SHAP with refinements) or `"exact_kernel"` for exact Kernel SHAP estimation
 #'     * `aggregation_method` -  a character, either `"mean_absolute"` or `"integral"`, `"max_absolute"`, `"sum_of_squares"`
 #'
 #' @section References:
-#' - \[1\] Krzyziński, Mateusz, et al. ["SurvSHAP(t): Time-dependent explanations of machine learning survival models."](https://arxiv.org/abs/2208.11080) arXiv preprint arXiv:2208.11080 (2022).
+#' - \[1\] Krzyziński, Mateusz, et al. ["SurvSHAP(t): Time-dependent explanations of machine learning survival models."](https://www.sciencedirect.com/science/article/pii/S0950705122013302) Knowledge-Based Systems 262 (2023): 110234
 #' - \[2\] Kovalev, Maxim S., et al. ["SurvLIME: A method for explaining machine learning survival models."](https://www.sciencedirect.com/science/article/pii/S0950705120304044?casa_token=6e9cyk_ji3AAAAAA:tbqo33MsZvNC9nrSGabZdLfPtZTsvsvZTHYQCM2aEhumLI5D46U7ovhr37EaYUhmKZrw45JzDhg) Knowledge-Based Systems 203 (2020): 106164.
 #'
 #' @examples
@@ -59,10 +60,8 @@ predict_parts <- function(explainer, ...) UseMethod("predict_parts", explainer)
 
 #' @rdname predict_parts.surv_explainer
 #' @export
-predict_parts.surv_explainer <- function(explainer, new_observation, ..., N = NULL, type = "survshap", output_type = "survival") {
-
-
-    label <- explainer$label
+predict_parts.surv_explainer <- function(explainer, new_observation, ..., N = NULL, type = "survshap", output_type = "survival",
+                                         explanation_label = NULL) {
 
     if (output_type == "risk") {
         return (DALEX::predict_parts(explainer = explainer,
@@ -80,7 +79,9 @@ predict_parts.surv_explainer <- function(explainer, new_observation, ..., N = NU
 
     }
 
-    attr(res, "label") <- label
+    attr(res, "label") <- ifelse(is.null(explanation_label), explainer$label, explanation_label)
+    res$event_times <- explainer$y[explainer$y[, 1] <= max(explainer$times), 1]
+    res$event_statuses <- explainer$y[explainer$y[, 1] <= max(explainer$times), 2]
     class(res) <- c('predict_parts_survival', class(res))
     res
 

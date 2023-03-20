@@ -6,7 +6,7 @@
 #' @param x an object of class  `"predict_profile_survival"` to be plotted
 #' @param ... additional parameters passed to the `plot.surv_ceteris_paribus` function
 #'
-#' @return A grid of `ggplot` objects arranged with the `gridExtra::grid.arrange` function.
+#' @return A collection of `ggplot` objects arranged with the `patchwork` package.
 #'
 #' @section Plot options:
 #'
@@ -21,6 +21,8 @@
 #' * `numerical_plot_type` - character, either `"lines"`, or `"contours"` selects the type of numerical variable plots
 #' * `title` - character, title of the plot
 #' * `subtitle` - character, subtitle of the plot, `'default'` automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels
+#' * `rug` - character, one of `"all"`, `"events"`, `"censors"`, `"none"` or `NULL`. Which times to mark on the x axis in `geom_rug()`.
+#' * `rug_colors` - character vector containing two colors (containing either hex codes "#FF69B4", or names "blue"). The first color (red by default) will be used to mark event times, whereas the second (grey by default) will be used to mark censor times.
 #'
 #'
 #' @family functions for plotting 'predict_profile_survival' objects

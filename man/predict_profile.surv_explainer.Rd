@@ -33,7 +33,7 @@ predict_profile(
 
 \item{variables}{a character vector containing names of variables to be explained}
 
-\item{categorical_variables}{a character vector of names of additional variables which should be treated as categorical (factors are automatically treated as categorical variables)}
+\item{categorical_variables}{a character vector of names of additional variables which should be treated as categorical (factors are automatically treated as categorical variables). If it contains variable names not present in the \code{variables} argument, they will be added at the end.}
 
 \item{...}{additional parameters passed to \code{DALEX::predict_profile} if \code{output_type =="risk"}}
 
@@ -47,7 +47,7 @@ predict_profile(
 An object of class \code{c("predict_profile_survival", "surv_ceteris_paribus")}. It is a list with the final result in the \code{result} element.
 }
 \description{
-This function calculates Ceteris Paribus Proifles for a specific observation with the possibility to take the time dimension into account.
+This function calculates Ceteris Paribus Profiles for a specific observation with the possibility to take the time dimension into account.
 }
 \examples{
 \donttest{

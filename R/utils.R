@@ -78,7 +78,7 @@ generate_discrete_color_scale <- function(n, colors = NULL) {
 
 #' Transform Fixed Point Prediction into a Stepfunction
 #'
-#' Some models return the survival funciton or cumulative hazard function prediction at the times of events present in the training data set. This is a convenient utility to allow the prediction to be evaluated at any time.
+#' Some models return the survival function or cumulative hazard function prediction at the times of events present in the training data set. This is a convenient utility to allow the prediction to be evaluated at any time.
 #'
 #' @param predict_function a function making the prediction based on `model` and `newdata` arguments, the `...` parameter is also passed to this function. It has to return either a numeric vector of the same length as `eval_times`, a matrix with this number of columns and the same number of rows as `nrow(newdata)`. It can also return a list, with one of the elements containing such an object.
 #' @param eval_times a numeric vector of times, at which the fixed predictions are made. This can be `NULL`, if `predict_function` returns a list which contains such a vector.
@@ -167,3 +167,21 @@ transform_to_stepfunction <- function(predict_function, eval_times = NULL, ..., 
 risk_from_chf <- function(predict_cumulative_hazard_function, times) {
     function(model, newdata) rowSums(predict_cumulative_hazard_function(model, newdata, times))
 }
+
+#' @keywords internal
+add_rug_to_plot <- function(base_plot, rug_df, rug, rug_colors){
+    if (rug == "all"){
+        return_plot <- with(rug_df, { base_plot +
+                geom_rug(data = rug_df[rug_df$statuses == 1,], mapping = aes(x=times, color = statuses), inherit.aes=F, color = rug_colors[1]) +
+                geom_rug(data = rug_df[rug_df$statuses == 0,], mapping = aes(x=times, color = statuses), inherit.aes=F, color = rug_colors[2]) })
+    } else if (rug == "events") {
+        return_plot <- with(rug_df, { base_plot +
+                geom_rug(data = rug_df[rug_df$statuses == 1,], mapping = aes(x=times, color = statuses), inherit.aes=F, color = rug_colors[1]) })
+    } else if (rug == "censors") {
+        return_plot <- with(rug_df, { base_plot +
+                geom_rug(data = rug_df[rug_df$statuses == 0,], mapping = aes(x=times, color = statuses), inherit.aes=F, color = rug_colors[2]) })
+    } else {
+        return_plot <- base_plot
+    }
+}
+

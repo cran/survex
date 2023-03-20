@@ -87,7 +87,7 @@ explain(
 
 \item{times}{numeric, a vector of times at which the survival function and cumulative hazard function should be evaluated for calculations}
 
-\item{times_generation}{either \code{"uniform"} or \code{"quantiles"}. Sets the way of generating the vector of times based on times provided in the \code{y} parameter. If \code{"uniform"} the vector contains 101 equally spaced points between the minimum and maximum observed times; if \code{"quantiles"} the vector contains 100 points between 0th and 99th percentiles of observed times. Ignored if \code{times} is not \code{NULL}.}
+\item{times_generation}{either \code{"uniform"} or \code{"quantiles"}. Sets the way of generating the vector of times based on times provided in the \code{y} parameter. If \code{"uniform"} the vector contains 50 equally spaced points between the minimum and maximum observed times; if \code{"quantiles"} the vector contains 50 points between 0th and 98th percentiles of observed times. Ignored if \code{times} is not \code{NULL}.}
 
 \item{predict_survival_function}{function taking 3 arguments \code{model}, \code{newdata} and \code{times}, and returning a matrix whose each row is a survival function evaluated at \code{times} for one observation from \code{newdata}}
 
@@ -104,7 +104,7 @@ It is a list containing the following elements:
 \item \code{residual_function} - function that returns residuals, shall return a single numerical value for each observation.
 \item \code{class} - class/classes of a model.
 \item \code{label} - label of explainer.
-\item \code{model_info} - named list contating basic information about model, like package, version of package and type.
+\item \code{model_info} - named list containing basic information about model, like package, version of package and type.
 \item \code{times} - a vector of times, that are used for evaluation of survival function and cumulative hazard function by default
 \item \code{predict_survival_function} - function that is used for model predictions in the form of survival function
 \item \code{predict_cumulative_hazard_function} - function that is used for model predictions in the form of cumulative hazard function

@@ -9,7 +9,7 @@ surv_shap(
   new_observation,
   ...,
   y_true = NULL,
-  calculation_method = "kernel",
+  calculation_method = "kernelshap",
   aggregation_method = "integral",
   path = "average",
   B = 25,
@@ -25,15 +25,9 @@ surv_shap(
 
 \item{y_true}{a two element numeric vector or matrix of one row and two columns, the first element being the true observed time and the second the status of the observation, used for plotting}
 
-\item{calculation_method}{a character, only \code{"kernel"} is implemented for now.}
+\item{calculation_method}{a character, either \code{"kernelshap"} for use of \code{kernelshap} library (providing faster Kernel SHAP with refinements) or \code{"exact_kernel"} for exact Kernel SHAP estimation}
 
 \item{aggregation_method}{a character, either \code{"mean_absolute"} or \code{"integral"}, \code{"max_absolute"}, \code{"sum_of_squares"}}
-
-\item{path}{ignored, placeholder the not implemented \code{"sampling"} method}
-
-\item{B}{ignored, placeholder the not implemented \code{"sampling"} method}
-
-\item{exact}{ignored, placeholder the not implemented \code{"sampling"} method}
 }
 \value{
 A list, containing the calculated SurvSHAP(t) results in the \code{result} field
@@ -44,7 +38,7 @@ Helper functions for \code{predict_parts.R}
 \section{References}{
 
 \itemize{
-\item [1] Krzyziński, Mateusz, et al. \href{https://arxiv.org/abs/2208.11080}{"SurvSHAP(t): Time-dependent explanations of machine learning survival models."} arXiv preprint arXiv:2208.11080 (2022).
+\item [1] Krzyziński, Mateusz, et al. \href{https://www.sciencedirect.com/science/article/pii/S0950705122013302}{"SurvSHAP(t): Time-dependent explanations of machine learning survival models."} Knowledge-Based Systems 262 (2023): 110234
 }
 }
 

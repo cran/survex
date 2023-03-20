@@ -1,4 +1,4 @@
-#' Plot Permuatational Feature Importance for Survival Models
+#' Plot Permutational Feature Importance for Survival Models
 #'
 #' This function plots feature importance objects created for survival models using the
 #' `model_parts()` function with a time-dependent metric, that is `loss_one_minus_cd_auc()` or
@@ -10,6 +10,8 @@
 #' @param subtitle character, subtitle of the plot, `'default'` automatically generates "created for XXX, YYY models", where XXX and YYY are the explainer labels
 #' @param max_vars maximum number of variables to be plotted (least important variables are ignored)
 #' @param colors character vector containing the colors to be used for plotting variables (containing either hex codes "#FF69B4", or names "blue")
+#' @param rug character, one of `"all"`, `"events"`, `"censors"`, `"none"` or `NULL`. Which times to mark on the x axis in `geom_rug()`.
+#' @param rug_colors character vector containing two colors (containing either hex codes "#FF69B4", or names "blue"). The first color (red by default) will be used to mark event times, whereas the second (grey by default) will be used to mark censor times.
 #'
 #' @return An object of the class `ggplot`.
 #'
@@ -35,20 +37,26 @@
 plot.surv_feature_importance <- function(x, ...,
                                          title = "Time-dependent feature importance",
                                          subtitle = "default",
-                                         max_vars = 6,
-                                         colors = NULL) {
+                                         max_vars = 7,
+                                         colors = NULL,
+                                         rug = "all",
+                                         rug_colors = c("#dd0000", "#222222")) {
 
     df_list <- c(list(x), list(...))
 
     transformed_dfs <- lapply(df_list, function(x) {
         x <- x$result
         label <- unique(x$label)
-        x <- x[x$permutation == 0, !colnames(x) %in% c("permutation", "label", "_baseline_")]
-        plotting_df <- with(x, cbind(x[1], stack(x, select = -times), label, row.names = NULL))
+        x <- x[x$`_permutation_` == 0, !colnames(x) %in% c("_permutation_", "label", "_baseline_")]
+        plotting_df <- with(x, cbind(x[1], stack(x, select = -`_times_`), label, row.names = NULL))
     })
 
+    transformed_rug_dfs <- lapply(df_list, function(x){
+        rug_df <- data.frame(times = x$event_times, statuses = as.character(x$event_statuses), label = unique(x$result$label))
+    })
 
     plotting_df <- do.call(rbind, transformed_dfs)
+    rug_df <- do.call(rbind, transformed_rug_dfs)
 
     label <- unique(plotting_df$label)
 
@@ -57,7 +65,7 @@ plot.surv_feature_importance <- function(x, ...,
     subs <- subs[order(subs$x, decreasing = TRUE), ]
     plotting_df <- plotting_df[plotting_df$ind %in% c("_full_model_", as.character(head(subs$var, max_vars))), ]
 
-    num_variables <- length(unique(plotting_df$ind))
+    num_vars <- length(unique(plotting_df$ind)) - 1 # remove full_model; note that num_vars <= max_vars
 
     additional_info <- switch(attr(x, "type"),
                               "raw" = "",
@@ -75,16 +83,20 @@ plot.surv_feature_importance <- function(x, ...,
         subtitle <- paste0("created for the ", glm_labels, " model")
     }
 
-    with(plotting_df, {
+    base_plot <- with(plotting_df, {
 
-    ggplot(data = plotting_df, aes(x = times, y = values, color = ind, label = ind)) +
+    ggplot(data = plotting_df, aes(x = `_times_`, y = values, color = ind, label = ind)) +
         geom_line(linewidth = 0.8, size = 0.8) +
-        theme_drwhy() +
+        theme_default_survex() +
         xlab("") +
         ylab(y_lab) +
-        scale_color_manual(name = "Variable", values = c("#000000", generate_discrete_color_scale(num_variables, colors))) +
+        xlim(c(0,NA))+
+        scale_color_manual(name = "Variable", values = c("#000000", generate_discrete_color_scale(num_vars, colors))) +
         labs(title = title, subtitle = subtitle) +
         facet_wrap(~label)
     })
 
+    return_plot <- add_rug_to_plot(base_plot, rug_df, rug, rug_colors)
+
+    return(return_plot)
 }

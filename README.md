@@ -3,6 +3,9 @@
 [![R-CMD-check](https://github.com/ModelOriented/survex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ModelOriented/survex/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/ModelOriented/survex/branch/main/graph/badge.svg)](https://app.codecov.io/gh/ModelOriented/survex?branch=main)
 [![CRAN status](https://www.r-pkg.org/badges/version/survex)](https://cran.r-project.org/package=survex)
+[![Total downloads](https://cranlogs.r-pkg.org/badges/grand-total/survex?color=orange)](https://cranlogs.r-pkg.org/badges/grand-total/survex)
+[![DrWhy-BackBone](https://img.shields.io/badge/DrWhy-BackBone-373589)](http://drwhy.ai/#BackBone)
+
 
 ## Overview 
 
@@ -59,6 +62,28 @@ plot(predict_parts(explainer, veteran[1, -c(3, 4)]))
 [![`survex` usage cheatsheet](man/figures/cheatsheet.png)](https://github.com/ModelOriented/survex/blob/main/misc/cheatsheet.pdf)
 
 
+## Citation
+
+If you use `survex`, please cite it as
+
+> M. Spytek, M. Krzyziński, H. Baniecki, P. Biecek. *survex: Explainable Machine Learning in Survival Analysis*. **R package version 0.2.2**, 2022. https://github.com/ModelOriented/survex
+
+```
+@article{spytek2022survex,
+    title   = {{survex: Explainable Machine Learning in Survival Analysis}},
+    author  = {Mikołaj Spytek and Mateusz Krzyziński and 
+               Hubert Baniecki and Przemysław Biecek},
+    journal = {R package version 0.2.2},
+    year    = {2022},
+    url     = {https://github.com/ModelOriented/survex}
+}
+```
+
+## Applications of `survex`
+
+- H. Baniecki, B. Sobieski, P. Bombiński, P. Szatkowski, P. Biecek. [Hospital Length of Stay Prediction Based on Multi-modal Data towards Trustworthy Human-AI Collaboration in Radiomics](https://arxiv.org/abs/2303.09817). *International Conference on Artificial Intelligence in Medicine*, 2023.
+- Share it with us!
+
 ## Related work
 
 - H. Ishwaran, U. B. Kogalur, E. H. Blackstone, M. S. Lauer. [Random survival forests](https://doi.org/10.1214/08-AOAS169). *Annals of Applied Statistics*, 2008.
@@ -66,4 +91,4 @@ plot(predict_parts(explainer, veteran[1, -c(3, 4)]))
 - M. S. Kovalev, L. V. Utkin, E. M. Kasimov. [SurvLIME: A method for explaining machine learning survival models](https://doi.org/10.1016/j.knosys.2020.106164). *Knowledge-Based Systems*, 2020.
 - R. Sonabend, F. J. Király, A. Bender, B. Bischl, M. Lang. [mlr3proba: an R package for machine learning in survival analysis](https://doi.org/10.1093/bioinformatics/btab039). *Bioinformatics*, 2021.
 - E. Hvitfeldt, H. Frick. [censored: 'parsnip' Engines for Survival Models](https://github.com/tidymodels/censored). *CRAN v0.1.0*, 2022.
-- M. Krzyziński, M. Spytek, H. Baniecki, P. Biecek. [SurvSHAP(t): Time-dependent explanations of machine learning survival models](https://arxiv.org/abs/2208.11080). *arXiv preprint arXiv:2208.11080*, 2022.
+- M. Krzyziński, M. Spytek, H. Baniecki, P. Biecek. [SurvSHAP(t): Time-dependent explanations of machine learning survival models](https://doi.org/10.1016/j.knosys.2022.110234). *Knowledge-Based Systems*, 2023.

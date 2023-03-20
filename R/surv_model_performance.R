@@ -20,7 +20,9 @@ surv_model_performance <- function(explainer, ..., times = NULL, type = "metrics
                                                   attr(output, "loss_type") <- attr(x, "loss_type")
                                                   output})
 
-    ret_list <- c(ret_list, list(eval_times = times))
+    ret_list <- list(result = ret_list, eval_times = times)
+    ret_list$event_times <- explainer$y[explainer$y[, 1] <= max(explainer$times), 1]
+    ret_list$event_statuses <- explainer$y[explainer$y[, 1] <= max(explainer$times), 2]
 
     class(ret_list) <- c("surv_model_performance", class(ret_list))
     attr(ret_list, "label") <- explainer$label
@@ -39,8 +41,14 @@ surv_model_performance <- function(explainer, ..., times = NULL, type = "metrics
             labels <- labels[!censored_earlier_mask]
             scores <- explainer$predict_survival_function(explainer$model, newdata_t, time)
             labels <- labels[order(scores, decreasing = FALSE)]
-            cbind(time = time, data.frame(TPR = cumsum(labels) / sum(labels),
-                                          FPR = cumsum(!labels) / sum(!labels), labels))
+            TPR <- cumsum(labels) / sum(labels)
+            FPR <- cumsum(!labels) / sum(!labels)
+            vals <- 1 - FPR
+            n <- length(vals)
+            AUC <- sum((vals[1:(n-1)] + vals[2:n]) * diff(TPR) / 2)
+            cbind(time = time, data.frame(TPR = TPR,
+                                          FPR = FPR,
+                                          AUC = AUC))
         })
 
 
