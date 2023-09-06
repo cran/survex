@@ -1,3 +1,19 @@
+# survex 1.1.2
+
+* fixed not being able to plot or print SurvLIME results for the cph model sometimes. ([#72](https://github.com/ModelOriented/survex/issues/72))
+* added global explanations via the SurvSHAP(t) method (see `model_survshap()` function)
+* added plots for global SurvSHAP(t) explanations (see `plot.aggregated_surv_shap()`)
+* added Accumulated Local Effects (ALE) explanations (see `model_profile(..., type = "accumulated")`)
+* added 2-dimensional PDP and ALE plots (see `model_profile_2d()` function)
+* added `plot(..., geom="variable")` function for plotting PDP and ALE explanations without the time dimension
+* new explainers: for `flexsurv` models and for Python scikit-survival models (can be used with `reticulate`)
+* new plot type for `model_survshap()` - curves (with functional box plot)
+* added diagnostic explanations - residual analysis (see `model_diagnostics()` function)
+* added new times generation method `"survival_quantiles"` and setting it as default (see `explain()`) 
+* made improvements on the vignettes for the package (see `vignette("pdp")` and `vignette("global-survshap")`)
+* increased the test coverage of the package
+* reduced the number of expensive `requireNamespace()` calls ([#83](https://github.com/ModelOriented/survex/issues/83))
+
 # survex 1.0.0
 
 * *breaking change:* refactored the structure of `model_performance_survival` object - calculated metrics are now in a `$result` list.
