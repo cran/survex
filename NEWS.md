@@ -1,4 +1,10 @@
-# survex 1.1.2
+# survex 1.2.0
+* added new `calculation_method` for `surv_shap()` called `"treeshap"` that uses the `treeshap` package  ([#75](https://github.com/ModelOriented/survex/issues/75))
+* enable to calculate SurvSHAP(t) explanations based on subsample of the explainer's data
+* changed default kernel width in SurvLIME from sqrt(p * 0.75) to sqrt(p) * 0.75 
+* fixed error in SurvLIME when non-factor `categorical_variables` were provided
+
+# survex 1.1.3
 
 * fixed not being able to plot or print SurvLIME results for the cph model sometimes. ([#72](https://github.com/ModelOriented/survex/issues/72))
 * added global explanations via the SurvSHAP(t) method (see `model_survshap()` function)
